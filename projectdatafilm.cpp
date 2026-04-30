@@ -105,6 +105,90 @@ void tampilCurrent() {
     }
 }
 
+// search film
+void searchFilm(string cari) {
+    Node* temp = head;
+    bool ditemukan = false;
+
+    while (temp != NULL) {
+        if (temp->judul == cari) {
+            cout << "\nFilm ditemukan:\n";
+            cout << "Judul : " << temp->judul << endl;
+            cout << "Genre : " << temp->genre << endl;
+            cout << "Tahun : " << temp->tahun << endl;
+            ditemukan = true;
+            break;
+        }
+        temp = temp->next;
+    }
+
+    if (!ditemukan) {
+        cout << "Film tidak ditemukan.\n";
+    }
+}
+
+//edit film
+void editFilm(string cari) {
+    Node* temp = head;
+
+    while (temp != NULL) {
+        if (temp->judul == cari) {
+            cout << "Edit data film:\n";
+
+            cout << "Judul baru: ";
+            getline(cin, temp->judul);
+
+            cout << "Genre baru: ";
+            getline(cin, temp->genre);
+
+            cout << "Tahun baru: ";
+            cin >> temp->tahun;
+            cin.ignore();
+
+            cout << "Film berhasil diupdate!\n";
+            return;
+        }
+        temp = temp->next;
+    }
+
+    cout << "Film tidak ditemukan.\n";
+}
+
+//hapus film
+void hapusFilm(string cari) {
+    Node* temp = head;
+
+    while (temp != NULL) {
+        if (temp->judul == cari) {
+
+            if (temp == head && temp == tail) {
+                head = tail = current = NULL;
+            } 
+            else if (temp == head) {
+                head = head->next;
+                head->prev = NULL;
+            } 
+            else if (temp == tail) {
+                tail = tail->prev;
+                tail->next = NULL;
+            } 
+            else {
+                temp->prev->next = temp->next;
+                temp->next->prev = temp->prev;
+            }
+
+            if (current == temp) current = head;
+
+            delete temp;
+            cout << "Film berhasil dihapus!\n";
+            return;
+        }
+        temp = temp->next;
+    }
+
+    cout << "Film tidak ditemukan.\n";
+}
+
 int main() {
     int pilihan;
     string judul, genre;
@@ -117,7 +201,10 @@ int main() {
         cout << "3. Next Film\n";
         cout << "4. Prev Film\n";
         cout << "5. Tampilkan Film Saat Ini\n";
-        cout << "6. Keluar\n";
+        cout << "6. Search Film\n";
+        cout << "7. Edit Film\n";
+        cout << "8. Hapus Film\n";
+        cout << "9. Keluar\n";
         cout << "Pilih: ";
         cin >> pilihan;
         cin.ignore();
@@ -168,7 +255,8 @@ int main() {
                 break;
         }
 
-    } while (pilihan != 6);
+    } while (pilihan != 9);
 
     return 0;
 }
+
