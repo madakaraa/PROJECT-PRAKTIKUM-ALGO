@@ -148,6 +148,24 @@ int main() {
             case 5:
                 tampilCurrent();
                 break;
+
+            case 6:
+                cout << "Masukkan judul yang dicari: ";
+                getline(cin, judul);
+                searchFilm(judul);
+                break;
+
+            case 7:
+                cout << "Masukkan judul yang ingin diedit: ";
+                getline(cin, judul);
+                editFilm(judul);
+                break;
+
+            case 8:
+                cout << "Masukkan judul yang ingin dihapus: ";
+                getline(cin, judul);
+                hapusFilm(judul);
+                break;
         }
 
     } while (pilihan != 6);
