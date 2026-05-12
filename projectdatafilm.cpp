@@ -2,9 +2,9 @@
 // Mahawira Dzakie_124250180
 // Project Manajemen Data Film
 
-
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 using namespace std;
 
 struct Node {
@@ -20,13 +20,13 @@ Node* current = NULL;
 
 // ===== UI =====
 void garis() {
-    cout << "========================================\n";
+    cout << "==================================================\n";
 }
 
 void header(string judul) {
-    system("cls"); // Windows (kalau Linux/Mac pakai "clear")
+    system("cls");
     garis();
-    cout << "        " << judul << endl;
+    cout << "              " << judul << endl;
     garis();
 }
 
@@ -35,9 +35,26 @@ void pause() {
     cin.get();
 }
 
-// ===== TAMBAH =====
+// ===== LOWERCASE =====
+string toLower(string teks) {
+
+    for (size_t i = 0; i < teks.length(); i++) {
+        teks[i] = tolower(teks[i]);
+    }
+
+    return teks;
+}
+
+// ===== TAMBAH FILM =====
 void tambahFilm(string judul, string genre, int tahun) {
-    Node* newNode = new Node{judul, genre, tahun, NULL, NULL};
+
+    Node* newNode = new Node{
+        judul,
+        genre,
+        tahun,
+        NULL,
+        NULL
+    };
 
     if (head == NULL) {
         head = tail = current = newNode;
@@ -50,6 +67,7 @@ void tambahFilm(string judul, string genre, int tahun) {
 
 // ===== LOAD FILE =====
 void loadFile() {
+
     ifstream file("film.txt");
 
     if (!file.is_open()) return;
@@ -58,7 +76,9 @@ void loadFile() {
     int tahun;
 
     while (getline(file, judul)) {
+
         getline(file, genre);
+
         file >> tahun;
         file.ignore();
 
@@ -70,26 +90,30 @@ void loadFile() {
 
 // ===== SAVE FILE =====
 void saveFile() {
+
     ofstream file("film.txt");
 
     Node* temp = head;
 
     while (temp != NULL) {
+
         file << temp->judul << endl;
         file << temp->genre << endl;
         file << temp->tahun << endl;
+
         temp = temp->next;
     }
 
     file.close();
 }
 
-// ===== TAMPIL =====
+// ===== TAMPIL FILM =====
 void tampilRapi() {
+
     Node* temp = head;
 
     if (temp == NULL) {
-        cout << "[!] Data kosong\n";
+        cout << "[!] Data film kosong\n";
         return;
     }
 
@@ -98,40 +122,53 @@ void tampilRapi() {
     garis();
 
     int no = 1;
+
     while (temp != NULL) {
-        cout << no++ << ".  "
+
+        cout << no++ << ". "
              << temp->judul << " | "
              << temp->genre << " | "
              << temp->tahun << endl;
+
         temp = temp->next;
     }
 
     garis();
 }
 
-// ===== SUBMENU =====
+// ===== MENU TAMPIL =====
 void menuTampilFilm() {
+
     int pilih;
+
     do {
+
         header("MENU TAMPIL FILM");
+
         cout << "1. Lihat Semua Film\n";
         cout << "2. Kembali\n";
+
         garis();
-        cout << "Pilih: ";
+
+        cout << "Pilih : ";
         cin >> pilih;
         cin.ignore();
 
         if (pilih == 1) {
+
             header("DAFTAR FILM");
+
             tampilRapi();
+
             pause();
         }
 
     } while (pilih != 2);
 }
 
-// ===== SORT =====
+// ===== SORT TAHUN =====
 void sortTahun() {
+
     if (head == NULL) {
         cout << "[!] Data kosong\n";
         return;
@@ -142,56 +179,220 @@ void sortTahun() {
     Node* last = NULL;
 
     do {
+
         swapped = false;
         ptr = head;
 
         while (ptr->next != last) {
+
             if (ptr->tahun > ptr->next->tahun) {
+
                 swap(ptr->judul, ptr->next->judul);
                 swap(ptr->genre, ptr->next->genre);
                 swap(ptr->tahun, ptr->next->tahun);
+
                 swapped = true;
             }
+
             ptr = ptr->next;
         }
+
         last = ptr;
+
     } while (swapped);
 
-    cout << "[✓] Data berhasil diurutkan!\n";
+    cout << "[✓] Film berhasil diurutkan berdasarkan tahun\n";
+}
+
+// ===== SORT JUDUL =====
+void sortJudul() {
+
+    if (head == NULL) {
+        cout << "[!] Data kosong\n";
+        return;
+    }
+
+    bool swapped;
+    Node* ptr;
+    Node* last = NULL;
+
+    do {
+
+        swapped = false;
+        ptr = head;
+
+        while (ptr->next != last) {
+
+            if (ptr->judul > ptr->next->judul) {
+
+                swap(ptr->judul, ptr->next->judul);
+                swap(ptr->genre, ptr->next->genre);
+                swap(ptr->tahun, ptr->next->tahun);
+
+                swapped = true;
+            }
+
+            ptr = ptr->next;
+        }
+
+        last = ptr;
+
+    } while (swapped);
+
+    cout << "[✓] Film berhasil diurutkan A-Z\n";
+}
+
+// ===== MENU SORTING =====
+void menuSorting() {
+
+    int pilih;
+
+    do {
+
+        header("MENU SORTING");
+
+        cout << "1. Sorting Tahun\n";
+        cout << "2. Sorting Judul A-Z\n";
+        cout << "3. Kembali\n";
+
+        garis();
+
+        cout << "Pilih : ";
+        cin >> pilih;
+        cin.ignore();
+
+        switch (pilih) {
+
+            case 1:
+
+                header("SORTING TAHUN");
+
+                sortTahun();
+
+                saveFile();
+
+                pause();
+
+                break;
+
+            case 2:
+
+                header("SORTING JUDUL");
+
+                sortJudul();
+
+                saveFile();
+
+                pause();
+
+                break;
+        }
+
+    } while (pilih != 3);
+}
+
+// ===== STATISTIK =====
+void statistikFilm() {
+
+    if (head == NULL) {
+        cout << "[!] Data kosong\n";
+        return;
+    }
+
+    int jumlah = 0;
+
+    Node* temp = head;
+
+    Node* terbaru = head;
+    Node* terlama = head;
+
+    while (temp != NULL) {
+
+        jumlah++;
+
+        if (temp->tahun > terbaru->tahun) {
+            terbaru = temp;
+        }
+
+        if (temp->tahun < terlama->tahun) {
+            terlama = temp;
+        }
+
+        temp = temp->next;
+    }
+
+    garis();
+
+    cout << "STATISTIK FILM\n";
+
+    garis();
+
+    cout << "Total Film   : " << jumlah << endl;
+
+    cout << "Film Terbaru : "
+         << terbaru->judul
+         << " (" << terbaru->tahun << ")" << endl;
+
+    cout << "Film Terlama : "
+         << terlama->judul
+         << " (" << terlama->tahun << ")" << endl;
+
+    garis();
 }
 
 // ===== NEXT =====
 void nextFilm() {
+
     if (current == NULL) {
+
         cout << "[!] Belum ada film\n";
+
     } else if (current->next == NULL) {
+
         cout << "[!] Sudah di film terakhir\n";
+
     } else {
+
         current = current->next;
+
         cout << "[>] " << current->judul << endl;
     }
 }
 
 // ===== PREV =====
 void prevFilm() {
+
     if (current == NULL) {
+
         cout << "[!] Belum ada film\n";
+
     } else if (current->prev == NULL) {
+
         cout << "[!] Sudah di film pertama\n";
+
     } else {
+
         current = current->prev;
+
         cout << "[<] " << current->judul << endl;
     }
 }
 
-// ===== CURRENT =====
+// ===== FILM SAAT INI =====
 void tampilCurrent() {
+
     if (current == NULL) {
+
         cout << "[!] Belum ada film\n";
+
     } else {
+
         garis();
+
         cout << "FILM SAAT INI\n";
+
         garis();
+
         cout << "Judul : " << current->judul << endl;
         cout << "Genre : " << current->genre << endl;
         cout << "Tahun : " << current->tahun << endl;
@@ -200,83 +401,121 @@ void tampilCurrent() {
 
 // ===== SEARCH =====
 void searchFilm(string cari) {
+
     Node* temp = head;
+
+    cari = toLower(cari);
+
     while (temp != NULL) {
-        if (temp->judul == cari) {
-            cout << "[✓] Ditemukan:\n";
-            cout << temp->judul << " | " << temp->genre << " | " << temp->tahun << endl;
+
+        if (toLower(temp->judul) == cari) {
+
+            cout << "[✓] Film ditemukan\n";
+
+            garis();
+
+            cout << "Judul : " << temp->judul << endl;
+            cout << "Genre : " << temp->genre << endl;
+            cout << "Tahun : " << temp->tahun << endl;
+
+            garis();
+
             return;
         }
+
         temp = temp->next;
     }
-    cout << "[!] Tidak ditemukan\n";
+
+    cout << "[!] Film tidak ditemukan\n";
 }
 
 // ===== EDIT =====
 void editFilm(string cari) {
+
     Node* temp = head;
+
     while (temp != NULL) {
+
         if (temp->judul == cari) {
-            cout << "Judul baru: ";
+
+            cout << "Judul baru : ";
             getline(cin, temp->judul);
-            cout << "Genre baru: ";
+
+            cout << "Genre baru : ";
             getline(cin, temp->genre);
-            cout << "Tahun baru: ";
+
+            cout << "Tahun baru : ";
             cin >> temp->tahun;
             cin.ignore();
 
-            cout << "[✓] Berhasil diupdate\n";
             saveFile();
+
+            cout << "[✓] Film berhasil diupdate\n";
+
             return;
         }
+
         temp = temp->next;
     }
+
     cout << "[!] Film tidak ditemukan\n";
 }
 
 // ===== HAPUS =====
 void hapusFilm(string cari) {
+
     Node* temp = head;
 
     while (temp != NULL) {
+
         if (temp->judul == cari) {
 
             if (temp == head && temp == tail) {
+
                 head = tail = current = NULL;
-            } 
-            else if (temp == head) {
+
+            } else if (temp == head) {
+
                 head = head->next;
                 head->prev = NULL;
-            } 
-            else if (temp == tail) {
+
+            } else if (temp == tail) {
+
                 tail = tail->prev;
                 tail->next = NULL;
-            } 
-            else {
+
+            } else {
+
                 temp->prev->next = temp->next;
                 temp->next->prev = temp->prev;
             }
 
             delete temp;
-            cout << "[✓] Film dihapus\n";
+
             saveFile();
+
+            cout << "[✓] Film berhasil dihapus\n";
+
             return;
         }
+
         temp = temp->next;
     }
 
-    cout << "[!] Tidak ditemukan\n";
+    cout << "[!] Film tidak ditemukan\n";
 }
 
 // ===== MAIN =====
 int main() {
+
     int pilihan;
     string judul, genre;
     int tahun;
 
-    loadFile(); // ← penting!
+    loadFile();
 
     do {
+
         header("MENU UTAMA");
 
         cout << "1. Tambah Film\n";
@@ -287,84 +526,141 @@ int main() {
         cout << "6. Search Film\n";
         cout << "7. Edit Film\n";
         cout << "8. Hapus Film\n";
-        cout << "9. Sorting Tahun\n";
-        cout << "10. Keluar\n";
+        cout << "9. Sorting\n";
+        cout << "10. Statistik Film\n";
+        cout << "11. Keluar\n";
 
         garis();
-        cout << "Pilih: ";
+
+        cout << "Pilih : ";
         cin >> pilihan;
         cin.ignore();
 
         switch (pilihan) {
+
             case 1:
+
                 header("TAMBAH FILM");
-                cout << "Judul: ";
+
+                cout << "Judul : ";
                 getline(cin, judul);
-                cout << "Genre: ";
+
+                cout << "Genre : ";
                 getline(cin, genre);
-                cout << "Tahun: ";
+
+                cout << "Tahun : ";
                 cin >> tahun;
                 cin.ignore();
+
                 tambahFilm(judul, genre, tahun);
+
                 saveFile();
+
+                cout << "[✓] Film berhasil ditambahkan\n";
+
                 pause();
+
                 break;
 
             case 2:
+
                 menuTampilFilm();
+
                 break;
 
             case 3:
+
                 header("NEXT FILM");
+
                 nextFilm();
+
                 pause();
+
                 break;
 
             case 4:
+
                 header("PREV FILM");
+
                 prevFilm();
+
                 pause();
+
                 break;
 
             case 5:
+
                 header("FILM SAAT INI");
+
                 tampilCurrent();
+
                 pause();
+
                 break;
 
             case 6:
+
                 header("SEARCH FILM");
-                cout << "Judul: ";
+
+                cout << "Masukkan judul : ";
                 getline(cin, judul);
+
                 searchFilm(judul);
+
                 pause();
+
                 break;
 
             case 7:
+
                 header("EDIT FILM");
-                cout << "Judul: ";
+
+                cout << "Masukkan judul : ";
                 getline(cin, judul);
+
                 editFilm(judul);
+
                 pause();
+
                 break;
 
             case 8:
+
                 header("HAPUS FILM");
-                cout << "Judul: ";
+
+                cout << "Masukkan judul : ";
                 getline(cin, judul);
+
                 hapusFilm(judul);
+
                 pause();
+
                 break;
 
             case 9:
-                header("SORTING");
-                sortTahun();
-                saveFile();
+
+                menuSorting();
+
+                break;
+
+            case 10:
+
+                header("STATISTIK FILM");
+
+                statistikFilm();
+
                 pause();
+
                 break;
         }
 
-    } while (pilihan != 10);
+    } while (pilihan != 11);
+
+    header("PROGRAM SELESAI");
+
+    cout << "Terima kasih telah menggunakan program.\n";
+
+    garis();
 
     return 0;
 }
