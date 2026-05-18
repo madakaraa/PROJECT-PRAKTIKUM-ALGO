@@ -5,6 +5,7 @@
 #include <iostream>
 using namespace std;
 
+
 struct Node {
     string judul, genre;
     int tahun;
@@ -188,7 +189,6 @@ void hapusFilm(string cari) {
 
     cout << "Film tidak ditemukan.\n";
 }
-
 // Tampilkan film berdasarkan rating tertinggi (bubble sort swap data)
 void tampilRatingTertinggi() {
     if (head == NULL) {
