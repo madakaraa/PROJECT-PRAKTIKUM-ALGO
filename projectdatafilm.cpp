@@ -5,10 +5,48 @@
 #include <iostream>
 using namespace std;
 
+// Kredensial login
+const string VALID_USERNAME = "algo";
+const string VALID_PASSWORD = "123";
+ 
+// Login dengan maksimal 3 percobaan, return true jika berhasil
+bool login() {
+    string username, password;
+    int percobaan = 0;
+    const int MAX_COBA = 3;
+ 
+    cout << "========================================\n";
+    cout << "   SISTEM MANAJEMEN DATA FILM\n";
+    cout << "========================================\n";
+ 
+    while (percobaan < MAX_COBA) {
+        cout << "\nLogin (" << (MAX_COBA - percobaan) << " kesempatan tersisa)\n";
+        cout << "Username: ";
+        cin >> username;
+        cout << "Password: ";
+        cin >> password;
+        cin.ignore();
+ 
+        if (username == VALID_USERNAME && password == VALID_PASSWORD) {
+            cout << "\nLogin berhasil! Selamat datang, " << username << "!\n";
+            return true;
+        } else {
+            percobaan++;
+            if (percobaan < MAX_COBA) {
+                cout << "Username atau password salah! Coba lagi.\n";
+            }
+        }
+    }
+ 
+    cout << "\nAkses ditolak! Akun diblokir sementara.\n";
+    return false;
+}
+
 
 struct Node {
     string judul, genre;
     int tahun;
+    float rating; // skala 1.0 - 10.0
     Node* next;
     Node* prev;
 };
@@ -17,10 +55,11 @@ Node* head = NULL;
 Node* tail = NULL;
 Node* current = NULL;
 
-// Tambah film di akhir
-void tambahFilm(string judul, string genre, int tahun) {
-    Node* newNode = new Node{judul, genre, tahun, NULL, NULL};
 
+// Tambah film di akhir
+void tambahFilm(string judul, string genre, int tahun, float rating) {
+    Node* newNode = new Node{judul, genre, tahun, rating, NULL, NULL};
+ 
     if (head == NULL) {
         head = tail = current = newNode;
     } else {
@@ -28,10 +67,11 @@ void tambahFilm(string judul, string genre, int tahun) {
         newNode->prev = tail;
         tail = newNode;
     }
-
+ 
     cout << "Film berhasil ditambahkan!\n";
 }
 
+    
 // SUBMENU tampil film
 void menuTampilFilm() {
     int pilih;
@@ -146,6 +186,10 @@ void editFilm(string cari) {
             cin >> temp->tahun;
             cin.ignore();
 
+            cout << "Rating baru (1.0 - 10.0): ";
+            cin >> temp->rating;
+            cin.ignore();
+
             cout << "Film berhasil diupdate!\n";
             return;
         }
@@ -189,6 +233,7 @@ void hapusFilm(string cari) {
 
     cout << "Film tidak ditemukan.\n";
 }
+
 // Tampilkan film berdasarkan rating tertinggi (bubble sort swap data)
 void tampilRatingTertinggi() {
     if (head == NULL) {
@@ -222,12 +267,30 @@ void tampilRatingTertinggi() {
         }
         if (!swapped) break;
     }
-
+ 
+    cout << "\n=== FILM BERDASARKAN RATING TERTINGGI ===\n";
+    temp = head;
+    int rank = 1;
+    while (temp != NULL) {
+        cout << rank << ". " << temp->judul << endl;
+        cout << "   Genre  : " << temp->genre << endl;
+        cout << "   Tahun  : " << temp->tahun << endl;
+        cout << "   Rating : " << temp->rating << "/10\n";
+        cout << "   ----------------------\n";
+        temp = temp->next;
+        rank++;
+    }
+}
 
 int main() {
     int pilihan;
     string judul, genre;
+    float rating;
     int tahun;
+    // Cek login dulu sebelum masuk menu
+    if (!login()) {
+        return 0;
+    }
 
     do {
         cout << "\n=== MENU ===\n";
@@ -253,9 +316,10 @@ int main() {
                 getline(cin, genre);
                 cout << "Tahun: ";
                 cin >> tahun;
-                tambahFilm(judul, genre, tahun);
-                break;
-
+                cout << "Rating (1.0 - 10.0): ";
+                cin >> rating;          // ← input rating dulu
+                cin.ignore();
+                tambahFilm(judul, genre, tahun, rating); // baru panggil fungsi
             case 2:
                 menuTampilFilm(); // ← sudah diganti ke submenu
                 break;
