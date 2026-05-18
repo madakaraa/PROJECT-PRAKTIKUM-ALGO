@@ -189,6 +189,41 @@ void hapusFilm(string cari) {
     cout << "Film tidak ditemukan.\n";
 }
 
+// Tampilkan film berdasarkan rating tertinggi (bubble sort swap data)
+void tampilRatingTertinggi() {
+    if (head == NULL) {
+        cout << "Data film kosong.\n";
+        return;
+    }
+ 
+    // Hitung jumlah node
+    int n = 0;
+    Node* temp = head;
+    while (temp != NULL) {
+        n++;
+        temp = temp->next;
+    }
+ 
+    // Bubble sort - swap data (bukan pointer), descending
+    bool swapped;
+    for (int i = 0; i < n - 1; i++) {
+        swapped = false;
+        Node* cur = head;
+        for (int j = 0; j < n - i - 1; j++) {
+            if (cur->rating < cur->next->rating) {
+                // Swap semua field data
+                swap(cur->judul, cur->next->judul);
+                swap(cur->genre, cur->next->genre);
+                swap(cur->tahun, cur->next->tahun);
+                swap(cur->rating, cur->next->rating);
+                swapped = true;
+            }
+            cur = cur->next;
+        }
+        if (!swapped) break;
+    }
+
+
 int main() {
     int pilihan;
     string judul, genre;
@@ -204,7 +239,8 @@ int main() {
         cout << "6. Search Film\n";
         cout << "7. Edit Film\n";
         cout << "8. Hapus Film\n";
-        cout << "9. Keluar\n";
+        cout << "9. Tampilkan Film Rating Tertinggi\n";
+        cout << "10. Keluar\n";
         cout << "Pilih: ";
         cin >> pilihan;
         cin.ignore();
@@ -253,6 +289,16 @@ int main() {
                 getline(cin, judul);
                 hapusFilm(judul);
                 break;
+            case 9:
+                tampilRatingTertinggi();
+                break;
+ 
+            case 10:
+                cout << "Keluar dari program.\n";
+                break;
+ 
+            default:
+                cout << "Pilihan tidak valid!\n";
         }
 
     } while (pilihan != 9);
