@@ -15,9 +15,9 @@ bool login() {
     int percobaan = 0;
     const int MAX_COBA = 3; 
  
-    cout << "========================================\n";
+    
     cout << "   SISTEM MANAJEMEN DATA FILM\n";
-    cout << "========================================\n";
+    
  
     while (percobaan < MAX_COBA) {
         cout << "\nLogin (" << (MAX_COBA - percobaan) << " kesempatan tersisa)\n";
