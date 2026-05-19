@@ -13,7 +13,7 @@ const string VALID_PASSWORD = "123";
 bool login() {
     string username, password;
     int percobaan = 0;
-    const int MAX_COBA = 3;
+    const int MAX_COBA = 3; 
  
     cout << "========================================\n";
     cout << "   SISTEM MANAJEMEN DATA FILM\n";
